@@ -26,7 +26,6 @@ public class TicTacToeActivity extends AppCompatActivity {
     private TextView winnerPlayerLabel;
     private LinearLayout winnerPlayerViewGroup;
     private ViewGroup buttonGrid;
-    private Button pendingUpdateBoardLiveDataView;
     private static String TAG = TicTacToeActivity.class.getName();
 
     @Override
@@ -36,22 +35,27 @@ public class TicTacToeActivity extends AppCompatActivity {
 
         // Get the ViewModel.
         viewModel = new ViewModelProvider(this).get(TicTacToeViewModel.class);
+
         winnerPlayerLabel = findViewById(R.id.winnerPlayerLabel);
-        buttonGrid = findViewById(R.id.buttonGrid);
         winnerPlayerViewGroup = findViewById(R.id.winnerPlayerViewGroup);
+        buttonGrid = findViewById(R.id.buttonGrid);
 
         viewModel.getBoardLiveData().observe(this, new Observer<Board>() {
             @Override
             public void onChanged(Board board) {
-                Player playerThatMoved = board.getPlayerThatMoved();
 
-                if (playerThatMoved != null) {
-                    pendingUpdateBoardLiveDataView.setText(playerThatMoved.toString());
-                    if (viewModel.getBoardLiveData().getWinner() != null) {
-                        winnerPlayerLabel.setText(playerThatMoved.toString());
-                        winnerPlayerViewGroup.setVisibility(View.VISIBLE);
+                int btnIndex = 0;
+                for (int row = 0; row < 3; row++) {
+                    for (int col = 0; col < 3; col++) {
+                        Player playerThatMoved = board.valueAtCell(row, col);
+                        ((Button) buttonGrid.getChildAt(btnIndex)).setText(playerThatMoved == null ? "" : playerThatMoved.toString());
+                        btnIndex++;
                     }
                 }
+
+                winnerPlayerLabel.setText(board.getWinner() == null ? "" : board.getWinner().toString());
+                winnerPlayerViewGroup.setVisibility(board.getWinner() == null ? View.GONE : View.VISIBLE);
+
             }
         });
     }
@@ -66,7 +70,6 @@ public class TicTacToeActivity extends AppCompatActivity {
         Log.i(TAG, "Click Row: [" + row + "," + col + "]");
 
         viewModel.getBoardLiveData().mark(row, col);
-        pendingUpdateBoardLiveDataView = button;
     }
 
 
@@ -89,14 +92,7 @@ public class TicTacToeActivity extends AppCompatActivity {
     }
 
     private void reset() {
-        winnerPlayerViewGroup.setVisibility(View.GONE);
-        winnerPlayerLabel.setText("");
-
         viewModel.getBoardLiveData().restart();
-
-        for (int i = 0; i < buttonGrid.getChildCount(); i++) {
-            ((Button) buttonGrid.getChildAt(i)).setText("");
-        }
 
     }
 

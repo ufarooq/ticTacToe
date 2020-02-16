@@ -17,6 +17,7 @@ public class BoardLiveData extends LiveData<Board> {
 
     public void restart() {
         model.restart();
+        setValue(model);
     }
 
     public void mark(int row, int col) {
@@ -24,9 +25,4 @@ public class BoardLiveData extends LiveData<Board> {
         model.setPlayerThatMoved(playerThatMoved);
         setValue(model);
     }
-
-    public Player getWinner(){
-        return model.getWinner();
-    }
-
 }
