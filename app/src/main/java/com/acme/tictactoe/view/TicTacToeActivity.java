@@ -44,7 +44,6 @@ public class TicTacToeActivity extends AppCompatActivity {
             @Override
             public void onChanged(Board board) {
                 Player playerThatMoved = board.getPlayerThatMoved();
-
                 if (playerThatMoved != null) {
                     pendingUpdateBoardLiveDataView.setText(playerThatMoved.toString());
                     if (viewModel.getBoardLiveData().getWinner() != null) {
@@ -97,7 +96,6 @@ public class TicTacToeActivity extends AppCompatActivity {
         for (int i = 0; i < buttonGrid.getChildCount(); i++) {
             ((Button) buttonGrid.getChildAt(i)).setText("");
         }
-
     }
 
 }

@@ -9,12 +9,16 @@ public class BoardLiveData extends LiveData<Board> {
     private Board model;
 
 
+
     public BoardLiveData() {
         this.model = new Board();
         setValue(model);
     }
 
 
+    public void clearPendingRestart(){
+
+    }
     public void restart() {
         model.restart();
     }

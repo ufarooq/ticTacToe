@@ -8,7 +8,6 @@ public class Board {
     private Cell[][] cells = new Cell[3][3];
 
     private Player winner;
-    private Player playerThatMoved;
     private GameState state;
     private Player currentTurn;
 
@@ -16,14 +15,6 @@ public class Board {
 
     public Board() {
         restart();
-    }
-
-    public Player getPlayerThatMoved() {
-        return playerThatMoved;
-    }
-
-    public void setPlayerThatMoved(Player playerThatMoved) {
-        this.playerThatMoved = playerThatMoved;
     }
 
     /**
@@ -66,10 +57,6 @@ public class Board {
         }
 
         return playerThatMoved;
-    }
-
-    public Player valueAtCell(int row, int col) {
-        return cells[row][col].getValue();
     }
 
     public Player getWinner() {
