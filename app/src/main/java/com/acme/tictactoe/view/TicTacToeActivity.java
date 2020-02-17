@@ -16,6 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.acme.tictactoe.R;
+import com.acme.tictactoe.livedata.BoardLiveData;
 import com.acme.tictactoe.model.Board;
 import com.acme.tictactoe.model.Player;
 import com.acme.tictactoe.viewmodel.TicTacToeViewModel;
@@ -26,7 +27,7 @@ public class TicTacToeActivity extends AppCompatActivity {
     private TextView winnerPlayerLabel;
     private LinearLayout winnerPlayerViewGroup;
     private ViewGroup buttonGrid;
-    private Button pendingUpdateBoardLiveDataView;
+    private Button cellClickButton;
     private static String TAG = TicTacToeActivity.class.getName();
 
     @Override
@@ -43,12 +44,25 @@ public class TicTacToeActivity extends AppCompatActivity {
         viewModel.getBoardLiveData().observe(this, new Observer<Board>() {
             @Override
             public void onChanged(Board board) {
-                Player playerThatMoved = board.getPlayerThatMoved();
-                if (playerThatMoved != null) {
-                    pendingUpdateBoardLiveDataView.setText(playerThatMoved.toString());
-                    if (viewModel.getBoardLiveData().getWinner() != null) {
-                        winnerPlayerLabel.setText(playerThatMoved.toString());
-                        winnerPlayerViewGroup.setVisibility(View.VISIBLE);
+                String action = viewModel.getBoardLiveData().currentAction();
+                if (action != null) {
+                    if (action.equals(BoardLiveData.ACTION_RESTART)) {
+                        winnerPlayerViewGroup.setVisibility(View.GONE);
+                        winnerPlayerLabel.setText("");
+                        for (int i = 0; i < buttonGrid.getChildCount(); i++) {
+                            ((Button) buttonGrid.getChildAt(i)).setText("");
+                        }
+                    } else if (action.equals(BoardLiveData.ACTION_MARK)) {
+                        Player playerThatMoved = viewModel.getBoardLiveData().getPlayerThatMoved();
+                        if (playerThatMoved != null && cellClickButton != null) {
+                            cellClickButton.setText(playerThatMoved.toString());
+                            if (viewModel.getBoardLiveData().getWinner() != null) {
+                                winnerPlayerLabel.setText(playerThatMoved.toString());
+                                winnerPlayerViewGroup.setVisibility(View.VISIBLE);
+                            }
+                            cellClickButton = null;
+                            viewModel.getBoardLiveData().clearPlayerThatMoved();
+                        }
                     }
                 }
             }
@@ -56,6 +70,22 @@ public class TicTacToeActivity extends AppCompatActivity {
     }
 
     public void onCellClicked(View v) {
+        /*Button button = (Button) v;
+
+        String tag = button.getTag().toString();
+        int row = Integer.valueOf(tag.substring(0, 1));
+        int col = Integer.valueOf(tag.substring(1, 2));
+        Log.i(TAG, "Click Row: [" + row + "," + col + "]");
+
+        Player playerThatMoved = viewModel.getBoardLiveData().mark(row, col);
+
+        if (playerThatMoved != null) {
+            button.setText(playerThatMoved.toString());
+            if (viewModel.getBoardLiveData().getWinner() != null) {
+                winnerPlayerLabel.setText(playerThatMoved.toString());
+                winnerPlayerViewGroup.setVisibility(View.VISIBLE);
+            }
+        }*/
 
         Button button = (Button) v;
 
@@ -64,8 +94,11 @@ public class TicTacToeActivity extends AppCompatActivity {
         int col = Integer.valueOf(tag.substring(1, 2));
         Log.i(TAG, "Click Row: [" + row + "," + col + "]");
 
-        viewModel.getBoardLiveData().mark(row, col);
-        pendingUpdateBoardLiveDataView = button;
+        Player playerThatMoved = viewModel.getBoardLiveData().mark(row, col);
+        if (playerThatMoved != null) {
+            cellClickButton = button;
+        }
+
     }
 
 
@@ -88,14 +121,7 @@ public class TicTacToeActivity extends AppCompatActivity {
     }
 
     private void reset() {
-        winnerPlayerViewGroup.setVisibility(View.GONE);
-        winnerPlayerLabel.setText("");
-
         viewModel.getBoardLiveData().restart();
-
-        for (int i = 0; i < buttonGrid.getChildCount(); i++) {
-            ((Button) buttonGrid.getChildAt(i)).setText("");
-        }
     }
 
 }
