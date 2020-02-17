@@ -28,6 +28,7 @@ public class TicTacToeActivity extends AppCompatActivity {
     private LinearLayout winnerPlayerViewGroup;
     private ViewGroup buttonGrid;
     private Button cellClickButton;
+    private int cellClickButtonId;
     private static String TAG = TicTacToeActivity.class.getName();
 
     @Override
@@ -44,6 +45,7 @@ public class TicTacToeActivity extends AppCompatActivity {
         viewModel.getBoardLiveData().observe(this, new Observer<Board>() {
             @Override
             public void onChanged(Board board) {
+
                 String action = viewModel.getBoardLiveData().currentAction();
                 if (action != null) {
                     if (action.equals(BoardLiveData.ACTION_RESTART)) {
@@ -54,13 +56,14 @@ public class TicTacToeActivity extends AppCompatActivity {
                         }
                     } else if (action.equals(BoardLiveData.ACTION_MARK)) {
                         Player playerThatMoved = viewModel.getBoardLiveData().getPlayerThatMoved();
-                        if (playerThatMoved != null && cellClickButton != null) {
-                            cellClickButton.setText(playerThatMoved.toString());
+                        if (playerThatMoved != null && cellClickButtonId != 0) {
+                            Button button = findViewById(cellClickButtonId);
+                            button.setText(playerThatMoved.toString());
                             if (viewModel.getBoardLiveData().getWinner() != null) {
                                 winnerPlayerLabel.setText(playerThatMoved.toString());
                                 winnerPlayerViewGroup.setVisibility(View.VISIBLE);
                             }
-                            cellClickButton = null;
+                            cellClickButtonId = 0;
                             viewModel.getBoardLiveData().clearPlayerThatMoved();
                         }
                     }
@@ -70,34 +73,14 @@ public class TicTacToeActivity extends AppCompatActivity {
     }
 
     public void onCellClicked(View v) {
-        /*Button button = (Button) v;
-
-        String tag = button.getTag().toString();
-        int row = Integer.valueOf(tag.substring(0, 1));
-        int col = Integer.valueOf(tag.substring(1, 2));
-        Log.i(TAG, "Click Row: [" + row + "," + col + "]");
-
-        Player playerThatMoved = viewModel.getBoardLiveData().mark(row, col);
-
-        if (playerThatMoved != null) {
-            button.setText(playerThatMoved.toString());
-            if (viewModel.getBoardLiveData().getWinner() != null) {
-                winnerPlayerLabel.setText(playerThatMoved.toString());
-                winnerPlayerViewGroup.setVisibility(View.VISIBLE);
-            }
-        }*/
-
         Button button = (Button) v;
 
         String tag = button.getTag().toString();
         int row = Integer.valueOf(tag.substring(0, 1));
         int col = Integer.valueOf(tag.substring(1, 2));
         Log.i(TAG, "Click Row: [" + row + "," + col + "]");
-
+        cellClickButtonId = button.getId();
         Player playerThatMoved = viewModel.getBoardLiveData().mark(row, col);
-        if (playerThatMoved != null) {
-            cellClickButton = button;
-        }
 
     }
 

@@ -29,10 +29,10 @@ public class BoardLiveData extends LiveData<Board> {
     }
 
     public Player mark(int row, int col) {
-        playerThatMoved = model.mark(row, col);
-        if (playerThatMoved != null)
+        this.playerThatMoved = model.mark(row, col);
+        if (this.playerThatMoved != null)
             setValue(model, ACTION_MARK);
-        return playerThatMoved;
+        return this.playerThatMoved;
     }
 
     public Player getPlayerThatMoved() {
