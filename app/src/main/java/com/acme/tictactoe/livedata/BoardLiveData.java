@@ -13,13 +13,14 @@ public class BoardLiveData extends LiveData<Board> {
     private Queue<String> pendingActions;
     private Player playerThatMoved;
 
+    public static final String ACTION_INIT = "init";
     public static final String ACTION_RESTART = "restart";
     public static final String ACTION_MARK = "mark";
 
     public BoardLiveData() {
         this.model = new Board();
         pendingActions = new LinkedList<>();
-        setValue(model);
+        setValue(model, ACTION_INIT);
     }
 
 

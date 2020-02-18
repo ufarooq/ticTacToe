@@ -47,6 +47,7 @@ public class TicTacToeActivity extends AppCompatActivity {
             public void onChanged(Board board) {
 
                 String action = viewModel.getBoardLiveData().currentAction();
+                Log.i(TAG, action + "");
                 if (action != null) {
                     if (action.equals(BoardLiveData.ACTION_RESTART)) {
                         winnerPlayerViewGroup.setVisibility(View.GONE);
@@ -65,6 +66,15 @@ public class TicTacToeActivity extends AppCompatActivity {
                             }
                             cellClickButtonId = 0;
                             viewModel.getBoardLiveData().clearPlayerThatMoved();
+                        }
+                    }
+                }else{
+                    int btnIndex = 0;
+                    for (int row = 0; row < 3; row++) {
+                        for (int col = 0; col < 3; col++) {
+                            Player playerThatMoved = board.valueAtCell(row, col);
+                            ((Button) buttonGrid.getChildAt(btnIndex)).setText(playerThatMoved == null ? "" : playerThatMoved.toString());
+                            btnIndex++;
                         }
                     }
                 }

@@ -26,6 +26,9 @@ public class Board {
         currentTurn = Player.X;
         state = GameState.IN_PROGRESS;
     }
+    public Player valueAtCell(int row, int col) {
+        return cells[row][col].getValue();
+    }
 
     /**
      * Mark the current row for the player who's current turn it is.
