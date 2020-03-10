@@ -1,5 +1,6 @@
 package com.acme.tictactoe.viewmodel;
 
+import android.util.Log;
 import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -14,6 +15,7 @@ public class TicTacToeViewModel extends ViewModel {
   private MutableLiveData<String> winnerPlayerLabelText;
   private GridLiveData gridLiveData;
   private Board board;
+  private static String TAG = TicTacToeViewModel.class.getName();
 
   public TicTacToeViewModel() {
     gridLiveData = new GridLiveData();
@@ -34,7 +36,10 @@ public class TicTacToeViewModel extends ViewModel {
     return winnerPlayerLabelText;
   }
 
-  public void mark(int row, int col, int viewId) {
+  public void mark(String tag, int viewId) {
+    int row = Integer.valueOf(tag.substring(0, 1));
+    int col = Integer.valueOf(tag.substring(1, 2));
+    Log.i(TAG, "Click Row: [" + row + "," + col + "]");
     Player playerThatMoved = board.mark(row, col);
     if (playerThatMoved != null) {
       gridLiveData.addPlayer(viewId, playerThatMoved.toString());

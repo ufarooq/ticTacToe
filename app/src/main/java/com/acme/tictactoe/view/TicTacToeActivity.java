@@ -1,7 +1,6 @@
 package com.acme.tictactoe.view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -15,8 +14,6 @@ import com.acme.tictactoe.R;
 import com.acme.tictactoe.viewmodel.TicTacToeViewModel;
 
 public class TicTacToeActivity extends AppCompatActivity {
-
-  private static String TAG = TicTacToeActivity.class.getName();
 
   private ViewGroup buttonGrid;
   private View winnerPlayerViewGroup;
@@ -36,13 +33,12 @@ public class TicTacToeActivity extends AppCompatActivity {
         .getGridLiveData()
         .observe(
             this,
-            stringPlayerStateHashMap -> {
-              stringPlayerStateHashMap.forEach(
-                  (viewId, text) -> {
-                    Button button = findViewById(viewId);
-                    button.setText(text);
-                  });
-            });
+            stringPlayerStateHashMap ->
+                stringPlayerStateHashMap.forEach(
+                    (viewId, text) -> {
+                      Button button = findViewById(viewId);
+                      button.setText(text);
+                    }));
     viewModel
         .getWinnerPlayerViewGroupVisibility()
         .observe(this, visible -> winnerPlayerViewGroup.setVisibility(visible));
@@ -72,16 +68,13 @@ public class TicTacToeActivity extends AppCompatActivity {
 
     Button button = (Button) v;
     String tag = button.getTag().toString();
-    int row = Integer.valueOf(tag.substring(0, 1));
-    int col = Integer.valueOf(tag.substring(1, 2));
-    Log.i(TAG, "Click Row: [" + row + "," + col + "]");
     /**
      * Update on Views inside Callback handler -> 1-1 mapping of handler for 1 view, Update on Views
      * inside Callback handler -> 1-N mapping will require ViewId 1. Control Dependence ->
      * playerThatMoved, getWinner(), 2. Data Dependence -> playerThatMoved 3. Data Changed (Model)
      * -> cells, winner, currentTurn, state
      */
-    viewModel.mark(row, col, v.getId());
+    viewModel.mark(tag, v.getId());
   }
 
   private void reset() {
