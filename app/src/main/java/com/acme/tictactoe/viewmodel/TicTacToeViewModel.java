@@ -1,29 +1,28 @@
 package com.acme.tictactoe.viewmodel;
 
+import static android.content.ContentValues.TAG;
+
+import android.util.Log;
 import android.view.View;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.acme.tictactoe.model.Board;
 import com.acme.tictactoe.model.Player;
 import com.acme.tictactoe.viewmodel.datastruct.GridLiveData;
-import com.acme.tictactoe.viewmodel.datastruct.PlayerState;
+import java.util.HashMap;
 
 public class TicTacToeViewModel extends ViewModel {
 
   private MutableLiveData<Integer> winnerPlayerViewGroupVisibility;
   private MutableLiveData<String> winnerPlayerLabelText;
-  private GridLiveData gridLiveData;
+  private MutableLiveData<HashMap<Integer, String>> cells;
   private Board board;
 
   public TicTacToeViewModel() {
-    gridLiveData = new GridLiveData();
     winnerPlayerViewGroupVisibility = new MutableLiveData<>(View.INVISIBLE);
+    cells = new MutableLiveData<>(new HashMap<>());
     winnerPlayerLabelText = new MutableLiveData<>("");
     board = new Board();
-  }
-
-  public GridLiveData getGridLiveData() {
-    return gridLiveData;
   }
 
   public MutableLiveData<Integer> getWinnerPlayerViewGroupVisibility() {
@@ -34,17 +33,30 @@ public class TicTacToeViewModel extends ViewModel {
     return winnerPlayerLabelText;
   }
 
-  public void mark(int row, int col, int viewId) {
+  public void mark(String tag, int viewId) {
+    int row = Integer.valueOf(tag.substring(0, 1));
+    int col = Integer.valueOf(tag.substring(1, 2));
+    Log.i(TAG, "Click Row: [" + row + "," + col + "]");
     Player playerThatMoved = board.mark(row, col);
-    Player winner = board.getWinner();
-    PlayerState playerState = new PlayerState(playerThatMoved, winner);
-    gridLiveData.addPlayer(viewId, playerState);
+    HashMap<Integer, String> currentCells = cells.getValue();
+    if (playerThatMoved != null) {
+      currentCells.put(viewId, playerThatMoved.toString());
+      cells.setValue(currentCells);
+      if (board.getWinner() != null) {
+        winnerPlayerLabelText.setValue(playerThatMoved.toString());
+        winnerPlayerViewGroupVisibility.setValue(View.VISIBLE);
+      }
+    }
   }
 
-  public void resetGridView(int viewId){
-    gridLiveData.resetPlayerState(viewId);
+  public MutableLiveData<HashMap<Integer, String>> getCells() {
+    return cells;
   }
+
   public void restart() {
     board.restart();
+    winnerPlayerViewGroupVisibility.setValue(View.GONE);
+    winnerPlayerLabelText.setValue("");
+    cells.setValue(new HashMap<>());
   }
 }
