@@ -36,15 +36,22 @@ public class TicTacToeViewModel extends ViewModel {
 
   public void mark(int row, int col, int viewId) {
     Player playerThatMoved = board.mark(row, col);
-    Player winner = board.getWinner();
-    PlayerState playerState = new PlayerState(playerThatMoved, winner);
-    gridLiveData.addPlayer(viewId, playerState);
+    if (playerThatMoved != null) {
+      gridLiveData.addPlayer(viewId, playerThatMoved.toString());
+      if (board.getWinner() != null) {
+        winnerPlayerLabelText.setValue(playerThatMoved.toString());
+        winnerPlayerViewGroupVisibility.setValue(View.VISIBLE);
+      }
+    }
   }
 
-  public void resetGridView(int viewId){
-    gridLiveData.resetPlayerState(viewId);
+  public void setTextGridViews(int viewId, String text) {
+    gridLiveData.addPlayer(viewId, text);
   }
+
   public void restart() {
+    winnerPlayerViewGroupVisibility.setValue(View.GONE);
+    winnerPlayerLabelText.setValue("");
     board.restart();
   }
 }

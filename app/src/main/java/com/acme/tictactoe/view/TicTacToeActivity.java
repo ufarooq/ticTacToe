@@ -38,21 +38,9 @@ public class TicTacToeActivity extends AppCompatActivity {
             this,
             stringPlayerStateHashMap -> {
               stringPlayerStateHashMap.forEach(
-                  (viewId, state) -> {
+                  (viewId, text) -> {
                     Button button = findViewById(viewId);
-                    /** Branch from Click handler with same dependencies */
-                    if (state.getPlayerThatMoved() != null) {
-                      button.setText(state.getPlayerThatMoved().toString());
-                      if (state.getWinner() != null) {
-                        viewModel
-                            .getWinnerPlayerLabelText()
-                            .setValue(state.getPlayerThatMoved().toString());
-                        viewModel.getWinnerPlayerViewGroupVisibility().setValue(View.VISIBLE);
-                      }
-                    } else {
-                      /** No Dependencies under reset */
-                      button.setText("");
-                    }
+                    button.setText(text);
                   });
             });
     viewModel
@@ -103,16 +91,9 @@ public class TicTacToeActivity extends AppCompatActivity {
      * currentTurn, state. Changed variables met the pre-condition.
      */
     viewModel.restart();
-    /**
-     * 1. Data Dependence: NULL, Data Dependence: NULL, Different dependencies for same View updates
-     * 2. Branch out, but Can be only 1 state under one branch
-     */
+    /** 1. Apply View Values directly, these views are same as buttons, */
     for (int i = 0; i < buttonGrid.getChildCount(); i++) {
-      viewModel.resetGridView(buttonGrid.getChildAt(i).getId());
+      viewModel.setTextGridViews(buttonGrid.getChildAt(i).getId(), "");
     }
-
-    /** State may effect during onChange */
-    viewModel.getWinnerPlayerViewGroupVisibility().setValue(View.GONE);
-    viewModel.getWinnerPlayerLabelText().setValue("");
   }
 }
