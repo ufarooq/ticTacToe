@@ -6,26 +6,25 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.acme.tictactoe.model.Board;
 import com.acme.tictactoe.model.Player;
-import com.acme.tictactoe.viewmodel.datastruct.GridLiveData;
-import com.acme.tictactoe.viewmodel.datastruct.PlayerState;
+import java.util.HashMap;
 
 public class TicTacToeViewModel extends ViewModel {
 
   private MutableLiveData<Integer> winnerPlayerViewGroupVisibility;
   private MutableLiveData<String> winnerPlayerLabelText;
-  private GridLiveData gridLiveData;
+  private MutableLiveData<HashMap<Integer, String>> gridViewsText;
   private Board board;
   private static String TAG = TicTacToeViewModel.class.getName();
 
   public TicTacToeViewModel() {
-    gridLiveData = new GridLiveData();
+    gridViewsText = new MutableLiveData<HashMap<Integer, String>>(new HashMap<>());
     winnerPlayerViewGroupVisibility = new MutableLiveData<>(View.INVISIBLE);
     winnerPlayerLabelText = new MutableLiveData<>("");
     board = new Board();
   }
 
-  public GridLiveData getGridLiveData() {
-    return gridLiveData;
+  public MutableLiveData<HashMap<Integer, String>> getGridViewsText() {
+    return gridViewsText;
   }
 
   public MutableLiveData<Integer> getWinnerPlayerViewGroupVisibility() {
@@ -42,7 +41,9 @@ public class TicTacToeViewModel extends ViewModel {
     Log.i(TAG, "Click Row: [" + row + "," + col + "]");
     Player playerThatMoved = board.mark(row, col);
     if (playerThatMoved != null) {
-      gridLiveData.addPlayer(viewId, playerThatMoved.toString());
+      HashMap<Integer, String> exisiting = gridViewsText.getValue();
+      exisiting.put(viewId, playerThatMoved.toString());
+      gridViewsText.setValue(exisiting);
       if (board.getWinner() != null) {
         winnerPlayerLabelText.setValue(playerThatMoved.toString());
         winnerPlayerViewGroupVisibility.setValue(View.VISIBLE);
@@ -51,7 +52,9 @@ public class TicTacToeViewModel extends ViewModel {
   }
 
   public void setTextGridViews(int viewId, String text) {
-    gridLiveData.addPlayer(viewId, text);
+    HashMap<Integer, String> exisiting = gridViewsText.getValue();
+    exisiting.put(viewId, text);
+    gridViewsText.setValue(exisiting);
   }
 
   public void restart() {

@@ -30,7 +30,7 @@ public class TicTacToeActivity extends AppCompatActivity {
 
     viewModel = new ViewModelProvider(this).get(TicTacToeViewModel.class);
     viewModel
-        .getGridLiveData()
+        .getGridViewsText()
         .observe(
             this,
             stringPlayerStateHashMap ->
@@ -68,23 +68,11 @@ public class TicTacToeActivity extends AppCompatActivity {
 
     Button button = (Button) v;
     String tag = button.getTag().toString();
-    /**
-     * Update on Views inside Callback handler -> 1-1 mapping of handler for 1 view, Update on Views
-     * inside Callback handler -> 1-N mapping will require ViewId 1. Control Dependence ->
-     * playerThatMoved, getWinner(), 2. Data Dependence -> playerThatMoved 3. Data Changed (Model)
-     * -> cells, winner, currentTurn, state
-     */
     viewModel.mark(tag, v.getId());
   }
 
   private void reset() {
-
-    /**
-     * Update on Views inside Callback handler 1. Data Changed (Model) -> cells, winner,
-     * currentTurn, state. Changed variables met the pre-condition.
-     */
     viewModel.restart();
-    /** 1. Apply View Values directly, these views are same as buttons, */
     for (int i = 0; i < buttonGrid.getChildCount(); i++) {
       viewModel.setTextGridViews(buttonGrid.getChildAt(i).getId(), "");
     }
